@@ -17,9 +17,5 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
 
-    # IMPORTANT — match host docker group id dynamically
-    group_add:
-      - "${DOCKER_GID}"
-
 volumes:
   jenkins_home:
