@@ -12,9 +12,7 @@ RUN apt-get update && apt-get install -y lsb-release ca-certificates curl && \
     apt-get update && apt-get install -y docker-ce-cli && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 👇 critical line
-RUN groupadd -for -g 998 docker && usermod -aG docker jenkins
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-USER jenkins
-
-RUN jenkins-plugin-cli --plugins "blueocean docker-workflow json-path-api"
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
