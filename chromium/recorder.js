@@ -41,20 +41,25 @@ function getTargets() {
 
   await Page.enable();
 
-  const filename = `${MODEL}_${Date.now()}.mp4`;
+const filename = `${MODEL}_${Date.now()}.mp4`;
 
-  const ffmpeg = spawn('ffmpeg', [
-    '-y',
-    '-f', 'image2pipe',
-    '-vcodec', 'mjpeg',
-    '-r', '30',
-    '-i', '-',
-    '-c:v', 'libx264',
-    '-preset', 'veryfast',
-    '-pix_fmt', 'yuv420p',
-    '-crf', '23',
-    filename
-  ]);
+const ffmpeg = spawn('ffmpeg', [
+  '-y',
+  '-f', 'image2pipe',
+  '-vcodec', 'mjpeg',
+  '-r', '30',
+  '-i', '-',
+
+  // *** THE IMPORTANT PART ***
+  '-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2',
+
+  '-c:v', 'libx264',
+  '-preset', 'veryfast',
+  '-pix_fmt', 'yuv420p',
+  '-crf', '23',
+
+  filename
+]);
 
   ffmpeg.stderr.on('data', d => process.stderr.write(d));
 
