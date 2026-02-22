@@ -2,19 +2,34 @@ FROM debian:12
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt install -y \
-    wget gnupg ca-certificates fonts-liberation \
-    libasound2 libatk-bridge2.0-0 libatk1.0-0 libcups2 \
-    libdbus-1-3 libdrm2 libgbm1 libgtk-3-0 libnspr4 \
-    libnss3 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 \
-    libxdamage1 libxext6 libxfixes3 libxrandr2 libxrender1 \
-    libxss1 libxtst6 xdg-utils && \
-    wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt install -y ./google-chrome-stable_current_amd64.deb && \
-    rm -f google-chrome-stable_current_amd64.deb
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    xvfb \
+    x11-utils \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libxshmfence1 \
+    libdrm2 \
+    libxkbcommon0 \
+    dbus-x11 \
+    --no-install-recommends
 
-RUN useradd -m chrome
-USER chrome
-WORKDIR /home/chrome
+# Install Google Chrome
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 
-ENTRYPOINT ["/usr/bin/google-chrome-stable"]
+# startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+ENTRYPOINT ["/start.sh"]
